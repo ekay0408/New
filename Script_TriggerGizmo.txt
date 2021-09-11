@@ -1,0 +1,102 @@
+Assets/Manomotion/Scripts/Gizmos/TriggerGizmo
+Script "TriggerGizmo.cs"
+.............................................................................................................................................................................................................................................
+using UnityEngine;
+using System.Collections;
+using UnityEngine.UI;
+public class TriggerGizmo : MonoBehaviour
+{
+    public float fadeSpeed = 20f;
+
+    private float currentAlphaValue = 1f;
+    private Text triggerLabelText;
+    public int click = 1;
+    public int grab = 1;
+    public int release = 1;
+    public int pick = 1;
+    public int drop = 1;
+
+    private Vector3 increaseScaleFactor;
+    public bool canExpand;
+
+    public Color clickColor, pickColor, dropColor, grabColor, releaseColor, tapColor;
+
+    Vector3 originalScale = Vector3.one * 0.5f;
+
+    void OnEnable()
+    {
+        triggerLabelText = GetComponent<Text>();
+        increaseScaleFactor = Vector3.one * 0.01f;
+        this.transform.localScale = originalScale;
+    }
+
+    void FixedUpdate()
+    {
+        FadeAndExpand();
+    }
+
+    private void FadeAndExpand()
+    {
+        if (canExpand)
+        {
+            currentAlphaValue = Mathf.Lerp(currentAlphaValue, 0f, fadeSpeed * Time.deltaTime);
+            Color CurrentColor = triggerLabelText.color;
+            triggerLabelText.color = new Color(CurrentColor.r, CurrentColor.g, CurrentColor.b, currentAlphaValue);
+            transform.localScale += increaseScaleFactor;
+
+            if (currentAlphaValue < 0.05f)
+            {
+                canExpand = false;
+            }
+        }
+        else
+        {
+            currentAlphaValue = 1;
+            triggerLabelText.color = Color.white;
+            this.gameObject.SetActive(false);
+        }
+    }
+
+    public virtual void InitializeTriggerGizmo(ManoGestureTrigger triggerGesture)
+    {
+        this.transform.localScale = originalScale;
+        canExpand = true;
+        if (!triggerLabelText)
+        {
+            triggerLabelText = GetComponent<Text>();
+        }
+
+        switch (triggerGesture)
+        {
+            case ManoGestureTrigger.CLICK:
+                triggerLabelText.text = "Click: " + click++; //im not yet sure if lalagyan ko ba ng dash or colon before the counter
+                triggerLabelText.color = clickColor;//medyo di ako kampante na ilagay si click or saan ba kasi hindi nadedetect to sa iba either release/grab nadedetect,,, pero kung makahanap ng exer na magwowork yan why not diba skl
+                break;
+            case ManoGestureTrigger.DROP:
+                triggerLabelText.text = "Drop: " + drop++;
+                triggerLabelText.color = dropColor;
+                break;
+            case ManoGestureTrigger.PICK:
+                triggerLabelText.text = "Pick: " + pick++;
+                triggerLabelText.color = pickColor;
+                break;
+            case ManoGestureTrigger.GRAB_GESTURE:
+                triggerLabelText.text = "Grab: " + grab++;
+                triggerLabelText.color = grabColor;
+                break;
+            case ManoGestureTrigger.RELEASE_GESTURE:
+                triggerLabelText.text = "Release: " + release++;
+                triggerLabelText.color = releaseColor;
+                break;
+            default:
+                break;
+        }
+    }
+}
+............................................................................................................................................................................................................................................
+*papalitan ng size si panel, si parent na click mo para isahang edit na per scene ah thankss
+*may pics din naka attach dito
+*pachat na lang ako kung anong matutulong ko, mag eexplore lang ako ng ui
+*pasabi na lang if may kung ano man na nangyari, thanks.
+*ttry ko rin if ever tinanggal ko yung game na kasama sa import ng manomotion if anong lalabas na error/s/warning/s
+*medyo linisin natin yung pinakafinal unity proj kasi icocombine din yung kay hannah ayuuun hahaha
